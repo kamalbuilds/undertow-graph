@@ -2,6 +2,8 @@
 
 **When one DeFi asset breaks, Undertow shows every vault the loss reaches, the path it travels, and what the curator should move first.**
 
+**In plain words.** Savers deposit into lending pools ("vaults") that lend their money to borrowers. Borrowers lock up a guarantee, usually a digital dollar, worth more than the loan. That guarantee is rarely the plain digital dollar: it is repackaged into a savings version, then a fixed-term version, each with a new name. When the underlying dollar breaks, warning systems search for its name, miss every repackaged layer, and the hole lands in savers' deposits unflagged. Undertow walks every layer as a graph and shows exactly which vaults take the loss.
+
 A stablecoin depegs. A risk alert keyed on its symbol flags the markets that list it as collateral. The loss does not stop there: it flows through wrappers (USDe to sUSDe to a Pendle PT on sUSDe), through vaults that allocate into other vaults, and through vault share tokens posted as collateral in markets that never mention the original asset. Undertow models Morpho mainnet as a FalkorDB graph and follows all of it.
 
 Graph Hacks: Context for AI Agents (WeMakeDevs x FalkorDB). **Tracks entered: Track 01, Agents That Act on Connected Data; Track 02, Agent Memory and Coordination.**
