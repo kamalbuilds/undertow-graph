@@ -1,0 +1,226 @@
+{
+ "6829cf181d33529b": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://x.com/D2_Finance/status/2035596979603218730",
+  "file": "DEMAND.md",
+  "line": 6,
+  "at": "2026-10-18"
+ },
+ "1b0a2995f0e28fe9": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://x.com/OctavioNotPunk/status/2035720837882323204",
+  "file": "DEMAND.md",
+  "line": 13,
+  "at": "2026-10-18"
+ },
+ "ea479e5cbd023769": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://x.com/KazumaxCrypto/status/2035591205749502110",
+  "file": "DEMAND.md",
+  "line": 20,
+  "at": "2026-10-18"
+ },
+ "1bc005b78cea6283": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://x.com/Matthew_Graham_/status/2036002083241971984",
+  "file": "DEMAND.md",
+  "line": 27,
+  "at": "2026-10-18"
+ },
+ "5327766f500c7eac": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://x.com/omeragoldberg/status/2036478623952023920",
+  "file": "DEMAND.md",
+  "line": 34,
+  "at": "2026-10-18"
+ },
+ "e26089fcb21eab6d": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://x.com/MerlinEgalite/status/2035642775941632389",
+  "file": "DEMAND.md",
+  "line": 41,
+  "at": "2026-10-18"
+ },
+ "3c7fd1c6da0dfb99": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://forum.morpho.org/t/rfc-a-user-centric-defi-collateral-transparency-framework-phase-1/2301",
+  "file": "DEMAND.md",
+  "line": 48,
+  "at": "2026-10-18"
+ },
+ "c5395900986ea12b": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://www.reddit.com/r/defi/comments/1x3vf2r/can_defi_protocols_really_be_considered/pfevesy/",
+  "file": "DEMAND.md",
+  "line": 55,
+  "at": "2026-10-18"
+ },
+ "1b38839eba661bbd": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://www.reddit.com/r/defi/comments/1x3vf2r/can_defi_protocols_really_be_considered/pfg8nc5/",
+  "file": "DEMAND.md",
+  "line": 62,
+  "at": "2026-10-18"
+ },
+ "7759f87dbeb23a0c": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://cointelegraph.com/news/defi-sleuths-trace-284m-stream-finance-exposure",
+  "file": "DEMAND.md",
+  "line": 69,
+  "at": "2026-10-18"
+ },
+ "90e12557d59ca580": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://www.theblock.co/news/defi/2025-11-04-analysts-map-285m-in-potential-exposure-across-defi-after-stream-finances-93m-loss-377491",
+  "file": "DEMAND.md",
+  "line": 76,
+  "at": "2026-10-18"
+ },
+ "b5926ab30bb5de9b": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://castlelabs.io/research/reports/vaultification-of-finance",
+  "file": "DEMAND.md",
+  "line": 83,
+  "at": "2026-10-18"
+ },
+ "1aa110cd6c114c9c": {
+  "ok": true,
+  "why": "quote found",
+  "url": "https://arxiv.org/abs/2602.03981",
+  "file": "DEMAND.md",
+  "line": 90,
+  "at": "2026-10-18"
+ },
+ "f518d5462b54033f": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://github.com/morpho-org/vault-v2/releases",
+  "file": "EDGE.md",
+  "line": 8,
+  "at": "2026-10-18"
+ },
+ "4f9acfed2d35651a": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://pypi.org/project/falkordb/",
+  "file": "EDGE.md",
+  "line": 15,
+  "at": "2026-10-18"
+ },
+ "3fe1e94f0bf1cea2": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://pypi.org/project/falkordblite/",
+  "file": "EDGE.md",
+  "line": 22,
+  "at": "2026-10-18"
+ },
+ "b69f70aa7a5322d8": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://github.com/FalkorDB/FalkorDB/releases/tag/v6.0.0",
+  "file": "EDGE.md",
+  "line": 29,
+  "at": "2026-10-18"
+ },
+ "4a219483109c3606": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://github.com/FalkorDB/FalkorDB/releases/tag/v4.22.0",
+  "file": "EDGE.md",
+  "line": 36,
+  "at": "2026-10-18"
+ },
+ "15b44627d13b3fce": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://github.com/morpho-org/sdks",
+  "file": "EDGE.md",
+  "line": 43,
+  "at": "2026-10-18"
+ },
+ "adf35369c0f9aef1": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://github.com/morpho-org/sdks/tree/main/packages/blue-sdk",
+  "file": "EDGE.md",
+  "line": 50,
+  "at": "2026-10-18"
+ },
+ "8c41470887e06da6": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://arxiv.org/abs/2602.03981",
+  "file": "EDGE.md",
+  "line": 57,
+  "at": "2026-10-18"
+ },
+ "e5aee817f5fde2c0": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://arxiv.org/abs/2511.22314",
+  "file": "EDGE.md",
+  "line": 64,
+  "at": "2026-10-18"
+ },
+ "37fb3ca3b2db5186": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://arxiv.org/abs/2609.07902",
+  "file": "EDGE.md",
+  "line": 71,
+  "at": "2026-10-18"
+ },
+ "7720c027c1d97f02": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://forum.morpho.org/t/rfc-a-user-centric-defi-collateral-transparency-framework-phase-1/2301",
+  "file": "USERS.md",
+  "line": 23,
+  "at": "2026-10-18"
+ },
+ "883c1f60cdf9d2be": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://x.com/omeragoldberg/status/2036478623952023920",
+  "file": "EDGE.md",
+  "line": 85,
+  "at": "2026-10-18"
+ },
+ "490346c3abcc9194": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://pypi.org/project/graphrag-sdk/",
+  "file": "EDGE.md",
+  "line": 92,
+  "at": "2026-10-18"
+ },
+ "77f64e1e6d8ee997": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://cointelegraph.com/news/defi-sleuths-trace-284m-stream-finance-exposure",
+  "file": "USERS.md",
+  "line": 28,
+  "at": "2026-10-18"
+ },
+ "a4c37a3fa052ed21": {
+  "ok": true,
+  "why": "reachable",
+  "url": "https://castlelabs.io/research/reports/vaultification-of-finance",
+  "file": "USERS.md",
+  "line": 33,
+  "at": "2026-10-18"
+ }
+}
