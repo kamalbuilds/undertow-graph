@@ -75,16 +75,44 @@ def erc4626_underlying(addresses: list[str]) -> dict[str, str]:
     return out
 
 
+def erc20_symbols(addresses: list[str]) -> dict[str, str]:
+    """symbol() selector 0x95d89b41; decodes ABI string or bytes32."""
+    key = os.environ.get("ALCHEMY_API_KEY")
+    rpc = os.environ.get("ETH_RPC_URL") or (f"https://eth-mainnet.g.alchemy.com/v2/{key}" if key else None)
+    batch = [{"jsonrpc": "2.0", "id": j, "method": "eth_call",
+              "params": [{"to": a, "data": "0x95d89b41"}, "latest"]} for j, a in enumerate(addresses)]
+    req = urllib.request.Request(rpc, data=json.dumps(batch).encode(), headers={"content-type": "application/json"})
+    out = {}
+    for r in json.load(urllib.request.urlopen(req, timeout=60)):
+        raw = bytes.fromhex((r.get("result") or "0x")[2:])
+        if len(raw) >= 96:
+            n = int.from_bytes(raw[32:64], "big")
+            out[addresses[r["id"]]] = raw[64:64 + n].decode(errors="ignore")
+        elif len(raw) == 32:
+            out[addresses[r["id"]]] = raw.rstrip(b"\0").decode(errors="ignore")
+    return out
+
+
 def pt_underlying(symbol: str, by_symbol: dict[str, str]) -> str | None:
     m = re.match(r"^PT-(.+?)-\d{1,2}[A-Z]{3}\d{4}$", symbol)
     return by_symbol.get(m.group(1).lower()) if m else None
 
 
+def cached(name: str, fetch):
+    os.makedirs("data", exist_ok=True)
+    path = f"data/morpho_{name}.json"
+    if os.environ.get("UNDERTOW_REFRESH") != "1" and os.path.exists(path):
+        return json.load(open(path))
+    rows = fetch()
+    json.dump(rows, open(path, "w"))
+    return rows
+
+
 def main():
     t0 = time.time()
-    markets = {m["marketId"]: m for m in paged("markets", MARKET, 500)}
-    v1 = paged("vaults", V1, 100)
-    v2 = paged("vaultV2s", V2, 5)
+    markets = {m["marketId"]: m for m in cached("markets", lambda: paged("markets", MARKET, 500))}
+    v1 = cached("v1", lambda: paged("vaults", V1, 100))
+    v2 = cached("v2", lambda: paged("vaultV2s", V2, 5))
     print(f"fetched markets={len(markets)} v1={len(v1)} v2={len(v2)} in {time.time()-t0:.0f}s", flush=True)
 
     vaults, alloc_vm, alloc_vv, curates = {}, [], [], []
@@ -146,14 +174,19 @@ def main():
                       "label": f'{m["collateralAsset"]["symbol"]}/{m["loanAsset"]["symbol"]}'})
 
     wraps = []
-    under = erc4626_underlying(sorted(assets))
+    under = cached("wraps", lambda: erc4626_underlying(sorted(assets)))
     by_symbol = {a["symbol"].lower(): addr for addr, a in assets.items()}
-    for addr, a in assets.items():
+    for addr, a in list(assets.items()):
         u = under.get(addr) or pt_underlying(a["symbol"], by_symbol)
         if u and u != addr:
             if u not in assets:
                 assets[u] = {"address": u, "symbol": u[:10], "priceUsd": 0, "shareOf": ""}
             wraps.append({"wrapper": addr, "underlying": u})
+    unknown = sorted(a for a, x in assets.items() if x["symbol"] == a[:10])
+    if unknown:
+        for a, sym in cached("symbols", lambda: erc20_symbols(unknown)).items():
+            if sym:
+                assets[a]["symbol"] = sym
 
     g = get_graph()
     try:
@@ -163,7 +196,11 @@ def main():
             raise
     g = get_graph()
     for label, key in (("Asset", "address"), ("Vault", "address"), ("Market", "id"), ("Curator", "name")):
-        g.query(f"CREATE INDEX FOR (n:{label}) ON (n.{key})")
+        try:
+            g.query(f"CREATE INDEX FOR (n:{label}) ON (n.{key})")
+        except Exception as e:
+            if "already indexed" not in str(e):
+                raise
     g.query("UNWIND $rows AS r MERGE (a:Asset {address:r.address}) SET a.symbol=r.symbol, a.priceUsd=r.priceUsd",
             {"rows": list(assets.values())})
     g.query("UNWIND $rows AS r CREATE (:Vault {address:r.address, symbol:r.symbol, name:r.name, "

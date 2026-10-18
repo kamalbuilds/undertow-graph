@@ -77,7 +77,7 @@ def run_shock(g, symbol: str, haircut: float) -> dict:
             loss = _market_loss(borrow, supply, coll, h)
             by_market[mid] = (label, a_sym, l_sym, loss)
             share = min(1.0, (al_usd or 0) / supply) if supply else 0.0
-            v_loss = loss * share
+            v_loss = min(loss * share, al_usd or 0.0)
             if v_loss <= 0:
                 continue
             path = chain + [f"market {label}", v_sym]
@@ -95,7 +95,7 @@ def run_shock(g, symbol: str, haircut: float) -> dict:
 
         nested = g.query(Q_NESTED, {"addrs": list(new_vaults)}).result_set if new_vaults else []
         for p_addr, p_sym, p_tvl, c_addr, ratio, chain_syms, depth in nested:
-            add = new_vaults[c_addr] * min(1.0, ratio or 0.0)
+            add = min(new_vaults[c_addr] * min(1.0, ratio or 0.0), p_tvl or 0.0)
             if add <= 0:
                 continue
             vault_loss[p_addr] = vault_loss.get(p_addr, 0.0) + add

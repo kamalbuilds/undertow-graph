@@ -5,3 +5,4 @@ __pycache__/
 research/mitm_mcp_traffic.db
 *.db
 node_modules/
+data/morpho_*.json

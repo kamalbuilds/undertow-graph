@@ -37,14 +37,19 @@ def paths(g, vault: str, asset: str) -> dict:
         MATCH (s:Asset) WHERE toLower(s.symbol) = toLower($asset)
         MATCH (v:Vault {address: toLower($vault)})
         MATCH p = (v)-[:ALLOCATES*1..5]->(:Market)-[:COLLATERAL]->(:Asset)-[:WRAPS*0..4]->(s)
-        RETURN [n IN nodes(p) | {label: labels(n)[0],
-                                  name: coalesce(n.symbol, n.label, n.name, n.id)}] AS nodes,
-               [r IN relationships(p) | coalesce(r.usd, 0)] AS usd
-        ORDER BY length(p) LIMIT 5"""
+        RETURN p ORDER BY length(p) LIMIT 5"""
     out = []
     for r in _q(g, cypher, {"vault": vault, "asset": asset}):
-        usd = r["usd"] + [None]
-        out.append([{**n, "usd": usd[i]} for i, n in enumerate(r["nodes"])])
+        p = r["p"]
+        edges = p.edges()
+        usd = [e.properties.get("usd", 0) or 0 for e in edges] + [None]
+        nodes = []
+        for i, n in enumerate(p.nodes()):
+            props = n.properties
+            nodes.append({"label": n.labels[0],
+                          "name": props.get("symbol") or props.get("label") or props.get("name") or props.get("id"),
+                          "usd": usd[i]})
+        out.append(nodes)
     return {"paths": out, "cypher": [cypher.strip()]}
 
 
