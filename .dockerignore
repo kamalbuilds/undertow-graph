@@ -1,0 +1,10 @@
+.venv
+.git
+.progress
+research
+spikes
+*.html
+mitm_mcp_traffic.db
+data/undertow.db*
+data/hop*
+__pycache__

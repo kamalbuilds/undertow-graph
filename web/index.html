@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Undertow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Undertow</h1>
+  <p id="stats" class="muted mono">Loading stats...</p>
+</header>
+<main class="grid">
+  <aside class="col left panel">
+    <h2>Shock an asset</h2>
+    <input id="search" type="search" placeholder="Search assets" aria-label="Search assets">
+    <ul id="assets" class="assets" role="listbox" aria-label="Assets"><li class="muted">Loading assets...</li></ul>
+    <label class="slider">Haircut <output id="hc-out" class="mono">30%</output>
+      <input id="haircut" type="range" min="5" max="100" value="30" step="5">
+    </label>
+    <button id="run" disabled>Run shock</button>
+    <p id="run-state" class="muted" role="status">Pick an asset to begin.</p>
+  </aside>
+
+  <section class="col center">
+    <div id="headline" class="headline panel">
+      <p class="muted">Pick an asset and run a shock to see where the loss travels.</p>
+    </div>
+    <details id="cypher-wrap" class="panel" hidden>
+      <summary>Show the Cypher</summary>
+      <pre id="cypher" class="mono"></pre>
+    </details>
+    <div class="panel graphbox">
+      <div class="legend muted">
+        <span><i class="k asset"></i>Asset</span><span><i class="k market"></i>Market</span><span><i class="k vault"></i>Vault</span><span><i class="k curator"></i>Curator</span>
+      </div>
+      <p id="graph-msg" class="muted graph-msg">The graph appears when you choose an asset.</p>
+      <svg id="graph" role="img" aria-label="Exposure graph"></svg>
+    </div>
+  </section>
+
+  <aside class="col right">
+    <section class="panel">
+      <h2>Vaults hit</h2>
+      <ol id="hits" class="hits"><li class="muted">No shock run yet. Run one to rank the vaults it reaches.</li></ol>
+    </section>
+    <section class="panel">
+      <h2>Agent</h2>
+      <div id="chat" class="chat"><p class="muted">Ask which vaults are most exposed, or ask for a curator action draft.</p></div>
+      <form id="chat-form">
+        <input id="chat-in" type="text" placeholder="Ask the agent" autocomplete="off" aria-label="Message the agent">
+        <button type="submit" id="chat-send">Send</button>
+      </form>
+    </section>
+    <section class="panel">
+      <h2>Past scenarios</h2>
+      <ul id="scenarios" class="scen"><li class="muted">Loading scenarios...</li></ul>
+    </section>
+  </aside>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

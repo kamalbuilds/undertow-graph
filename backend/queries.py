@@ -37,7 +37,8 @@ def paths(g, vault: str, asset: str) -> dict:
         MATCH (s:Asset) WHERE toLower(s.symbol) = toLower($asset)
         MATCH (v:Vault {address: toLower($vault)})
         MATCH p = (v)-[:ALLOCATES*1..5]->(:Market)-[:COLLATERAL]->(:Asset)-[:WRAPS*0..4]->(s)
-        RETURN p ORDER BY length(p) LIMIT 5"""
+        WITH p, length(p) AS hops ORDER BY hops LIMIT 5
+        RETURN p"""
     out = []
     for r in _q(g, cypher, {"vault": vault, "asset": asset}):
         p = r["p"]
@@ -115,7 +116,7 @@ def systemic_assets(g, limit: int = 10) -> list:
     reach = _q(g, """
         MATCH (s:Asset)
         MATCH (w:Asset)-[:WRAPS*0..4]->(s)
-        MATCH (m:Market)-[:COLLATERAL]->(w)
+        MATCH (m:Market)-[:COLLATERAL]->(w) WHERE m.collateralUsd >= m.borrowUsd
         MATCH (v:Vault)-[al:ALLOCATES]->(m)
         WITH s, count(DISTINCT v) AS vaults, sum(al.usd) AS usd, count(DISTINCT w) AS wrappers
         RETURN s.symbol AS symbol, vaults, usd AS vault_usd_exposed, wrappers
