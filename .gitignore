@@ -10,3 +10,13 @@ video/work/
 .uicraft-read.json
 video/v2/cap/
 video/v2/frames*/
+research/
+*.html
+!web/*.html
+docs/WIN-CONDITIONS.md
+docs/KILLED-IDEAS.md
+spikes/citation-contexts/
+data/
+video/v2/
+!video/v2/src/
+video/work/
