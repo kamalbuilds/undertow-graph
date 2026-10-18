@@ -135,3 +135,40 @@ def run_cypher_readonly(g, cypher: str) -> dict:
     res = g.ro_query(cypher)
     names = [h[1] if isinstance(h, (list, tuple)) else str(h) for h in res.header]
     return {"header": names, "rows": [list(r) for r in res.result_set[:200]]}
+
+
+def curator_actions(g, vault: str, asset: str, haircut: float = 0.3) -> dict:
+    """Exposed markets for this vault (direct or through child vaults) and a safe same-loan market for each."""
+    q_exposed = """
+        MATCH (s:Asset) WHERE toLower(s.symbol) = toLower($asset)
+        MATCH (v:Vault {address: toLower($vault)})-[:ALLOCATES*0..3]->(holder:Vault)-[al:ALLOCATES]->(m:Market)
+              -[:COLLATERAL]->(c:Asset)-[:WRAPS*0..4]->(s)
+        MATCH (m)-[:LENDS]->(loan:Asset)
+        RETURN DISTINCT holder.address AS holder, holder.symbol AS holder_symbol, m.id AS market, m.label AS label,
+               c.symbol AS collateral, loan.address AS loan, loan.symbol AS loan_symbol, al.usd AS allocated_usd,
+               m.borrowUsd AS borrow_usd, m.supplyUsd AS supply_usd, m.collateralUsd AS collateral_usd
+        ORDER BY allocated_usd DESC"""
+    q_safe = """
+        MATCH (s:Asset) WHERE toLower(s.symbol) = toLower($asset)
+        MATCH (m:Market)-[:LENDS]->(:Asset {address: $loan})
+        MATCH (m)-[:COLLATERAL]->(c:Asset)
+        WHERE NOT (c)-[:WRAPS*0..4]->(s) AND m.supplyUsd > 1000000 AND m.borrowUsd < m.supplyUsd * 0.9
+        RETURN m.id AS market, m.label AS label, c.symbol AS collateral, m.supplyUsd AS supply_usd,
+               m.borrowUsd / m.supplyUsd AS utilization
+        ORDER BY m.supplyUsd DESC LIMIT 1"""
+    steps = []
+    for e in _q(g, q_exposed, {"vault": vault, "asset": asset}):
+        borrow = min(e["borrow_usd"] or 0, e["supply_usd"] or 0)
+        bad = max(0.0, borrow - (e["collateral_usd"] or 0) * (1 - haircut))
+        share = min(1.0, (e["allocated_usd"] or 0) / e["supply_usd"]) if e["supply_usd"] else 0
+        safe = _q(g, q_safe, {"asset": asset, "loan": e["loan"]})
+        steps.append({
+            "vault": e["holder_symbol"], "vault_address": e["holder"], "market": e["label"], "market_id": e["market"],
+            "collateral": e["collateral"], "allocated_usd": round(e["allocated_usd"] or 0, 2),
+            "modelled_loss_usd": round(min(bad * share, e["allocated_usd"] or 0), 2),
+            "action": "set supply cap to 0 on this market and reallocate",
+            "reallocate_to": safe[0] if safe else None,
+        })
+    return {"vault": vault, "asset": asset, "haircut": haircut, "steps": steps,
+            "total_modelled_loss_usd": round(sum(s["modelled_loss_usd"] for s in steps), 2),
+            "cypher": [q_exposed.strip(), q_safe.strip()]}

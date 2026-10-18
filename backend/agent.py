@@ -125,11 +125,15 @@ TOOLS: list[dict] = [
         "type": "function",
         "function": {
             "name": "draft_curator_action",
-            "description": "Read a vault's exposure and draft a short curator response plan.",
+            "description": "For one vault and one shocked asset, list every market where the vault is exposed "
+                           "through the asset's wrapper family, the modelled loss there, and a same-loan-asset "
+                           "market outside that family to reallocate into. Returns concrete cap and reallocation steps.",
             "parameters": {
                 "type": "object",
-                "properties": {"vault": {"type": "string", "description": "Vault address"}},
-                "required": ["vault"],
+                "properties": {"vault": {"type": "string", "description": "Vault address"},
+                               "asset": {"type": "string", "description": "Shocked asset symbol"},
+                               "haircut": {"type": "number", "description": "Price drop as a fraction, 0..1"}},
+                "required": ["vault", "asset"],
             },
         },
     },
@@ -220,26 +224,8 @@ def _collect_cypher(result, bucket: list[str]) -> None:
         bucket.extend(statement for statement in cypher if isinstance(statement, str))
 
 
-def _draft_curator_action(graph, vault: str) -> dict:
-    exposure = queries.vault_exposure(graph, vault)
-    parts = [f"Curator action plan for vault {vault}."]
-    if isinstance(exposure, dict):
-        for key in ("tvl_usd", "tvlUsd"):
-            if exposure.get(key) is not None:
-                parts.append(f"Current TVL ${exposure[key]}.")
-                break
-        positions = None
-        for key in ("positions", "markets", "exposures", "assets"):
-            if isinstance(exposure.get(key), list):
-                positions = exposure[key]
-                break
-        if positions is not None:
-            parts.append(f"Live exposure spans {len(positions)} position(s).")
-    parts.append(
-        "Response: cut the largest single-asset concentration first, then re-run "
-        "the shock to confirm the modelled loss shrinks."
-    )
-    return {"vault": vault, "exposure": exposure, "plan": " ".join(parts)}
+def _draft_curator_action(graph, vault: str, asset: str, haircut: float) -> dict:
+    return queries.curator_actions(graph, vault, asset, haircut)
 
 
 def _dispatch(graph, name: str, args: dict, cypher_bucket: list[str]):
@@ -258,7 +244,8 @@ def _dispatch(graph, name: str, args: dict, cypher_bucket: list[str]):
         cypher_bucket.append(cypher)
         result = queries.run_cypher_readonly(graph, cypher)
     elif name == "draft_curator_action":
-        result = _draft_curator_action(graph, str(args["vault"]))
+        result = _draft_curator_action(graph, str(args["vault"]), str(args["asset"]),
+                                       float(args.get("haircut", 0.3)))
     else:
         return {"error": f"unknown tool: {name}"}
     _collect_cypher(result, cypher_bucket)
