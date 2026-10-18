@@ -39,10 +39,21 @@ function renderAssets() {
       ${a.wrapped_by?.length ? `<div class="chips"><span class="num">wrapped by</span>${a.wrapped_by.slice(0, 4).map((w) => `<span class="chip">${esc(w)}</span>`).join("")}${a.wrapped_by.length > 4 ? `<span class="chip">+${a.wrapped_by.length - 4}</span>` : ""}</div>` : ""}
     </li>`).join("");
 }
-api("/api/assets").then((a) => {
+api("/api/assets").then((rows) => {
+  const bySym = new Map();
+  for (const r of rows) {
+    const m = bySym.get(r.symbol) || { symbol: r.symbol, collateral_usd: 0, wrapped_by: [] };
+    m.collateral_usd += r.collateral_usd || 0;
+    m.wrapped_by = [...new Set([...m.wrapped_by, ...(r.wrapped_by || [])])];
+    bySym.set(r.symbol, m);
+  }
+  const a = [...bySym.values()].sort((x, y) => y.collateral_usd - x.collateral_usd);
   state.assets = a;
   if (!a.length) { $("assets").innerHTML = `<li class="muted">The graph holds no shockable assets yet.</li>`; return; }
   renderAssets();
+  const want = new URLSearchParams(location.search).get("asset") || "USDe";
+  const li = [...$("assets").querySelectorAll("li")].find((x) => x.dataset.sym === want);
+  if (li) { pick(li); li.scrollIntoView({ block: "nearest" }); }
 }).catch((e) => { $("assets").innerHTML = `<li class="err">Assets failed: ${esc(e.message)}</li>`; });
 $("search").addEventListener("input", renderAssets);
 function pick(li) {
