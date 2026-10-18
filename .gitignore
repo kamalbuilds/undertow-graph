@@ -1,0 +1,7 @@
+.env
+.venv/
+__pycache__/
+.progress/
+research/mitm_mcp_traffic.db
+*.db
+node_modules/
