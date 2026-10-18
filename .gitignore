@@ -8,3 +8,5 @@ node_modules/
 data/morpho_*.json
 video/work/
 .uicraft-read.json
+video/v2/cap/
+video/v2/frames*/
