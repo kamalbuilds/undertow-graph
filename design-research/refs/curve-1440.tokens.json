@@ -1,0 +1,93 @@
+{
+ "title": "Swap - Curve",
+ "h1": null,
+ "h2": null,
+ "h3": null,
+ "body": {
+  "text": "MAKE SURE YOU ARE ON THE RIGHT DOMAIN\n\nAlways carefully chec",
+  "font": "\"Mona Sans\", \"Helvetica Neue\", Helvetica, sans-serif",
+  "size": "16px",
+  "weight": "400",
+  "tracking": "normal",
+  "leading": "normal",
+  "color": "rgb(253, 252, 252)",
+  "bg": "rgb(18, 17, 15)",
+  "radius": "0px",
+  "padding": "0px",
+  "border": "0px none rgb(253, 252, 252)",
+  "transform": "none",
+  "features": "\"calt\", \"liga\""
+ },
+ "p": {
+  "text": "Always carefully check that your URL is https://www.curve.fi",
+  "font": "\"Mona Sans\", \"Helvetica Neue\", Helvetica, sans-serif",
+  "size": "14px",
+  "weight": "400",
+  "tracking": "0%",
+  "leading": "16px",
+  "color": "rgb(37, 36, 32)",
+  "bg": "rgba(0, 0, 0, 0)",
+  "radius": "0px",
+  "padding": "0px",
+  "border": "0px none rgb(37, 36, 32)",
+  "transform": "none",
+  "features": "\"calt\", \"liga\""
+ },
+ "a": {
+  "text": "pool page",
+  "font": "\"Mona Sans\", \"Helvetica Neue\", Helvetica, sans-serif",
+  "size": "14px",
+  "weight": "400",
+  "tracking": "0%",
+  "leading": "16px",
+  "color": "rgb(212, 208, 204)",
+  "bg": "rgba(0, 0, 0, 0)",
+  "radius": "0px",
+  "padding": "0px",
+  "border": "0px none rgb(212, 208, 204)",
+  "transform": "none",
+  "features": "\"calt\", \"liga\""
+ },
+ "button": {
+  "text": "CONNECT WALLET",
+  "font": "\"Mona Sans\", \"Helvetica Neue\", Helvetica, sans-serif",
+  "size": "14px",
+  "weight": "600",
+  "tracking": "normal",
+  "leading": "20px",
+  "color": "rgb(248, 247, 247)",
+  "bg": "rgb(57, 118, 238)",
+  "radius": "0px",
+  "padding": "4px 5px",
+  "border": "2px solid rgba(0, 0, 0, 0)",
+  "transform": "uppercase",
+  "features": "\"calt\", \"liga\""
+ },
+ "input": {
+  "text": "",
+  "font": "\"Mona Sans\", \"Helvetica Neue\", Helvetica, sans-serif",
+  "size": "24px",
+  "weight": "600",
+  "tracking": "-0.48px",
+  "leading": "24px",
+  "color": "rgb(248, 247, 247)",
+  "bg": "rgba(0, 0, 0, 0)",
+  "radius": "0px",
+  "padding": "0px 8px 0px 0px",
+  "border": "0px none rgb(248, 247, 247)",
+  "transform": "uppercase",
+  "features": "\"calt\", \"liga\""
+ },
+ "loadedFonts": [
+  "Mona Sans"
+ ],
+ "htmlBg": "rgba(0, 0, 0, 0)",
+ "textLen": 1010,
+ "height": 1265,
+ "url": "https://curve.fi/",
+ "viewport": [
+  1440,
+  900
+ ],
+ "lumaStddev": 33.6
+}

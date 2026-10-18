@@ -1,0 +1,80 @@
+{
+ "title": "Force-directed graph component | D3 | Observable",
+ "h1": null,
+ "h2": null,
+ "h3": null,
+ "body": {
+  "text": "Observable\nSign up\nD3\n12\n4,621\n419\n\u2304\nchart = ForceGraph(mise",
+  "font": "\"Inter Variable\", ui-sans-serif, sans-serif",
+  "size": "16px",
+  "weight": "400",
+  "tracking": "normal",
+  "leading": "24px",
+  "color": "rgb(27, 30, 35)",
+  "bg": "rgba(0, 0, 0, 0)",
+  "radius": "0px",
+  "padding": "0px",
+  "border": "0px solid rgb(27, 30, 35)",
+  "transform": "none",
+  "features": "normal"
+ },
+ "p": null,
+ "a": {
+  "text": "Observable",
+  "font": "\"Inter Variable\", ui-sans-serif, sans-serif",
+  "size": "14px",
+  "weight": "400",
+  "tracking": "normal",
+  "leading": "20px",
+  "color": "rgb(27, 30, 35)",
+  "bg": "rgba(0, 0, 0, 0)",
+  "radius": "4px",
+  "padding": "4px 16px",
+  "border": "0px solid rgb(27, 30, 35)",
+  "transform": "none",
+  "features": "normal"
+ },
+ "button": {
+  "text": "Sign up",
+  "font": "\"Inter Variable\", ui-sans-serif, sans-serif",
+  "size": "14px",
+  "weight": "500",
+  "tracking": "normal",
+  "leading": "20px",
+  "color": "rgb(255, 255, 255)",
+  "bg": "lab(44.0605 29.0279 -86.0352)",
+  "radius": "4px",
+  "padding": "6px 8px",
+  "border": "1px solid lab(44.0605 29.0279 -86.0352)",
+  "transform": "none",
+  "features": "normal"
+ },
+ "input": {
+  "text": "",
+  "font": "\"Inter Variable\", ui-sans-serif, sans-serif",
+  "size": "14px",
+  "weight": "400",
+  "tracking": "normal",
+  "leading": "20px",
+  "color": "rgb(27, 30, 35)",
+  "bg": "rgba(0, 0, 0, 0)",
+  "radius": "0px",
+  "padding": "0px",
+  "border": "0px solid rgb(27, 30, 35)",
+  "transform": "none",
+  "features": "normal"
+ },
+ "loadedFonts": [
+  "Inter Variable",
+  "Spline Sans Mono Variable"
+ ],
+ "htmlBg": "rgba(0, 0, 0, 0)",
+ "textLen": 3951,
+ "height": 10606,
+ "url": "https://observablehq.com/@d3/force-directed-graph",
+ "viewport": [
+  390,
+  844
+ ],
+ "lumaStddev": 41.8
+}

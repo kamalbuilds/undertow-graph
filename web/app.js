@@ -10,6 +10,24 @@ const usd = (n) => {
   return "$" + n.toFixed(0);
 };
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const mdLite = (t) => esc(t)
+  .replace(/0x[0-9a-fA-F]{40}/g, (m) => `${m.slice(0, 6)}…${m.slice(-4)}`)
+  .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+  .replace(/`([^`]+)`/g, "<code>$1</code>")
+  .replace(/^\s*[*-]\s+/gm, "• ");
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+function countUp(el, target, fmt) {
+  if (!el) return;
+  if (reducedMotion()) { el.textContent = fmt(target); return; }
+  const t0 = performance.now(), dur = 700;
+  const step = (t) => {
+    const k = Math.min(1, (t - t0) / dur);
+    el.textContent = fmt(target * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) requestAnimationFrame(step); else el.textContent = fmt(target);
+  };
+  requestAnimationFrame(step);
+}
 
 async function api(path, body) {
   const opt = body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {};
@@ -70,7 +88,7 @@ $("haircut").addEventListener("input", (e) => { $("hc-out").textContent = e.targ
 
 // graph
 const svg = d3.select("#graph");
-const colors = { Asset: "#3ee0c5", Market: "#6aa5c9", Vault: "#e6f1f5", Curator: "#b69cff" };
+const colors = { Asset: "#3ee0c5", Market: "#6aa5c9", Vault: "#e6f1f5", Curator: "#9fb8c4" };
 const lossScale = d3.scaleLinear().range(["#f4a259", "#e4572e"]).clamp(true);
 
 async function loadGraph(sym) {
@@ -115,6 +133,7 @@ function drawGraph(g) {
   const node = root.append("g").selectAll("g").data(nodes).join("g").style("cursor", "pointer");
   node.each(function (d) {
     const s = d3.select(this), rr = r(d.usd || 0);
+    d._r = rr;
     if (d.label === "Asset") s.append("circle").attr("r", rr);
     else if (d.label === "Market") s.append("rect").attr("x", -rr).attr("y", -rr * 0.7).attr("width", rr * 2).attr("height", rr * 1.4);
     else if (d.label === "Vault") s.append("path").attr("d", `M0,${-rr * 1.2}L${rr * 1.2},0L0,${rr * 1.2}L${-rr * 1.2},0Z`);
@@ -122,15 +141,23 @@ function drawGraph(g) {
     s.select("*").attr("fill", colors[d.label] || "#7f9aa6").attr("stroke", "#07131a").attr("stroke-width", 1.5);
   });
   node.append("title").text((d) => `${d.label}: ${d.name} ${d.usd ? usd(d.usd) : ""}`);
-  node.filter((d) => d.label === "Asset" || d.label === "Curator").append("text")
-    .text((d) => d.name).attr("x", 10).attr("y", 4).attr("fill", "#e6f1f5").attr("font-size", 11).attr("pointer-events", "none");
+  node.append("text")
+    .text((d) => d.name)
+    .attr("x", (d) => (d.label === "Asset" || d.label === "Curator") ? 12 : 0)
+    .attr("y", (d) => (d.label === "Asset" || d.label === "Curator") ? 4 : d._r * 1.2 + 13)
+    .attr("text-anchor", (d) => (d.label === "Asset" || d.label === "Curator") ? "start" : "middle")
+    .attr("fill", "#e6f1f5").attr("font-size", 11)
+    .attr("stroke", "#07131a").attr("stroke-width", 3).attr("stroke-linejoin", "round")
+    .attr("paint-order", "stroke").attr("pointer-events", "none");
   node.on("click", (ev, d) => { if (d.label === "Vault") showPath(d.name); });
   const pulses = root.append("g");
   const sim = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id((d) => d.id).distance(60).strength(0.5))
-    .force("charge", d3.forceManyBody().strength(-120))
+    .force("link", d3.forceLink(links).id((d) => d.id).distance(62).strength(0.5))
+    .force("charge", d3.forceManyBody().strength(-200))
     .force("center", d3.forceCenter(W / 2, H / 2))
-    .force("collide", d3.forceCollide(14))
+    .force("x", d3.forceX(W / 2).strength(0.14))
+    .force("y", d3.forceY(H / 2).strength(0.14))
+    .force("collide", d3.forceCollide((d) => (d._r || 6) + 13))
     .on("tick", () => {
       link.attr("x1", (d) => d.source.x).attr("y1", (d) => d.source.y).attr("x2", (d) => d.target.x).attr("y2", (d) => d.target.y);
       node.attr("transform", (d) => `translate(${d.x},${d.y})`);
@@ -166,6 +193,7 @@ function colorHits(s) {
       if (!dist.has(v)) { dist.set(v, dist.get(u) + 1); edgeHop.set(l, dist.get(u)); q.push(v); }
     }
   }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   edgeHop.forEach((hop, l) => {
     const c = state.pulses.append("circle").attr("r", 4).attr("fill", "#f4a259").attr("opacity", 0)
       .attr("cx", l.source.x).attr("cy", l.source.y);
@@ -207,10 +235,13 @@ $("run").addEventListener("click", async () => {
 });
 
 function renderHeadline(s) {
+  const pairMax = Math.max(s.direct.loss_usd, s.graph.loss_usd) || 1;
+  const ramp = d3.scaleLinear().domain([0, pairMax]).range(["#f4a259", "#e4572e"]).clamp(true);
   $("headline").innerHTML = `
-    <div class="big d"><div class="lab">Direct collateral alert</div><div class="val">${usd(s.direct.loss_usd)}</div><div class="cnt">${s.direct.vaults} vaults</div></div>
-    <div class="big g"><div class="lab">Through the graph</div><div class="val">${usd(s.graph.loss_usd)}</div><div class="cnt">${s.graph.vaults} vaults</div></div>
+    <div class="big"><div class="lab">Direct collateral alert</div><div class="val" data-v="${s.direct.loss_usd}" style="color:${ramp(s.direct.loss_usd)}">${usd(s.direct.loss_usd)}</div><div class="cnt">${plural(s.direct.vaults, "vault", "vaults")}</div></div>
+    <div class="big"><div class="lab">Through the graph</div><div class="val" data-v="${s.graph.loss_usd}" style="color:${ramp(s.graph.loss_usd)}">${usd(s.graph.loss_usd)}</div><div class="cnt">${plural(s.graph.vaults, "vault", "vaults")}</div></div>
     <p class="sub muted">${esc(s.asset)} at a ${Math.round(s.haircut * 100)}% haircut. The direct view only sees markets whose collateral is ${esc(s.asset)}. The graph follows every wrapper and vault-of-vaults.</p>`;
+  $("headline").querySelectorAll(".big .val").forEach((el) => countUp(el, Number(el.dataset.v), usd));
   $("cypher-wrap").hidden = !(s.cypher && s.cypher.length);
   $("cypher").textContent = (s.cypher || []).join("\n\n");
 }
@@ -218,12 +249,15 @@ function renderHeadline(s) {
 function renderHits(s) {
   const ol = $("hits");
   if (!s.hits.length) { ol.innerHTML = `<li class="muted">${esc(s.asset)} reaches no vaults at this haircut.</li>`; return; }
+  const max = d3.max(s.hits, (h) => h.loss_usd) || 1;
+  const ramp = d3.scaleLinear().domain([0, max]).range(["#f4a259", "#e4572e"]).clamp(true);
   ol.innerHTML = s.hits.map((h) => `
     <li data-v="${esc(h.vault)}" data-s="${esc(h.symbol)}" tabindex="0">
-      <div class="r1"><strong>${esc(h.symbol)}</strong><span class="loss">${usd(h.loss_usd)}</span></div>
-      <div class="meta">${esc(h.curator || "no curator")} · ${h.hops} hop${h.hops === 1 ? "" : "s"} · TVL ${usd(h.tvl_usd)}</div>
+      <div class="r1"><strong>${esc(h.symbol)}</strong><span class="loss" data-l="${h.loss_usd}" style="color:${ramp(h.loss_usd)}">${usd(h.loss_usd)}</span></div>
+      <div class="meta">${esc(h.curator || "no curator")} · ${plural(h.hops, "hop", "hops")} · TVL ${usd(h.tvl_usd)}</div>
       <div class="path">${(h.path || []).map(esc).join(" → ")}</div>
     </li>`).join("");
+  ol.querySelectorAll(".loss").forEach((el) => countUp(el, Number(el.dataset.l), usd));
 }
 $("hits").addEventListener("click", (e) => { const li = e.target.closest("li[data-s]"); if (li) showPath(li.dataset.s); });
 
@@ -254,7 +288,7 @@ $("chat-form").addEventListener("submit", async (e) => {
   input.value = ""; $("chat-send").disabled = true;
   try {
     const r = await api("/api/agent", { message: msg, session_id: sid });
-    out.innerHTML = esc(r.reply) +
+    out.innerHTML = mdLite(r.reply) +
       (r.tool_calls?.length ? `<small>Tools: ${r.tool_calls.map((t) => esc(t.name)).join(", ")}</small>` : "") +
       (r.cypher?.length ? `<details><summary>Cypher the agent ran</summary><pre class="mono">${esc(r.cypher.join("\n\n"))}</pre></details>` : "");
   } catch (err) { out.className = "msg err"; out.textContent = "Agent failed: " + err.message; }

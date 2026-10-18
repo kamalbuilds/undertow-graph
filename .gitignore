@@ -7,3 +7,4 @@ research/mitm_mcp_traffic.db
 node_modules/
 data/morpho_*.json
 video/work/
+.uicraft-read.json
