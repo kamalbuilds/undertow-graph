@@ -159,7 +159,8 @@ def curator_actions(g, vault: str, asset: str, haircut: float = 0.3) -> dict:
     steps = []
     for e in _q(g, q_exposed, {"vault": vault, "asset": asset}):
         borrow = min(e["borrow_usd"] or 0, e["supply_usd"] or 0)
-        bad = max(0.0, borrow - (e["collateral_usd"] or 0) * (1 - haircut))
+        from backend.shock import _market_loss
+        bad = _market_loss(e["borrow_usd"], e["supply_usd"], e["collateral_usd"], haircut)
         share = min(1.0, (e["allocated_usd"] or 0) / e["supply_usd"]) if e["supply_usd"] else 0
         safe = _q(g, q_safe, {"asset": asset, "loan": e["loan"]})
         steps.append({

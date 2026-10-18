@@ -1,7 +1,7 @@
 """Propagate a price shock on one asset through wrappers, markets and nested vaults.
 
-Loss model, per market whose collateral is hit: bad debt = max(0, borrow - collateral * (1 - haircut)),
-the instant-depeg case where liquidations cannot clear in time. Bad debt is split across supplying
+Loss model, per market whose collateral is hit: added bad debt = max(0, borrow - collateral * (1 - haircut))
+minus the bad debt already there, the instant-depeg case where liquidations cannot clear in time. Bad debt is split across supplying
 vaults by their share of market supply, then carried up every vault-of-vault edge by
 allocation / child TVL. Vault share tokens used as collateral elsewhere take the vault's loss
 ratio as their own haircut, which is how a loss jumps from one vault into an unrelated market.
@@ -46,8 +46,10 @@ RETURN v.address, collect(c.name)
 
 
 def _market_loss(borrow: float, supply: float, collateral: float, haircut: float) -> float:
+    """Bad debt the shock adds; debt already uncovered before the shock is not counted."""
     borrow = min(borrow or 0.0, supply or 0.0)
-    return max(0.0, borrow - (collateral or 0.0) * (1.0 - haircut))
+    collateral = collateral or 0.0
+    return max(0.0, borrow - collateral * (1.0 - haircut)) - max(0.0, borrow - collateral)
 
 
 def run_shock(g, symbol: str, haircut: float) -> dict:
