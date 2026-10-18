@@ -2,7 +2,7 @@
 
 **When one DeFi asset breaks, Undertow shows every vault the loss reaches, the path it travels, and what the curator should move first.**
 
-**Demo film (2:33):** [video/undertow-film.mp4](video/undertow-film.mp4)  ·  **Blog:** [docs/BLOG.md](docs/BLOG.md)
+**Live:** [undertow-graph.fly.dev](https://undertow-graph.fly.dev)  ·  **Demo film (2:33):** [video/undertow-film.mp4](video/undertow-film.mp4)  ·  **Blog:** [docs/BLOG.md](docs/BLOG.md)
 
 **In plain words.** Savers deposit into lending pools ("vaults") that lend their money to borrowers. Borrowers lock up a guarantee, usually a digital dollar, worth more than the loan. That guarantee is rarely the plain digital dollar: it is repackaged into a savings version, then a fixed-term version, each with a new name. When the underlying dollar breaks, warning systems search for its name, miss every repackaged layer, and the hole lands in savers' deposits unflagged. Undertow walks every layer as a graph and shows exactly which vaults take the loss.
 
